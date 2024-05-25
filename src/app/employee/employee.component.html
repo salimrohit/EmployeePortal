@@ -1,0 +1,76 @@
+<div class="row">
+    <div class="d-flex col-md-2 flex-column" style="height: 90vh; background-color: #1D2D44;">
+        <a routerLink="/dashboard" class="my-4 ms-5 text-light" href="">Home</a>
+        <a routerLink="/employee" class="my-4 ms-5 text-light" href="">User</a>
+
+    </div>
+    <div class="col-md-10 p-3">
+        <div class="d-flex" style="height: 5vh;">
+            <h3>Employee List</h3>
+            <a routerLink="/add" class="ms-auto"><button class="btn btn-outline-primary"><i class="fa-solid fa-user-plus me-2"></i>Add</button></a>
+        </div>
+        <!-- uses Date pipe -->
+        <h5 class="mt-2">{{adminLoginTime | date:'short'}}</h5>
+
+        <div class="d-flex mt-5">
+            <!-- input tag -->
+            <form class="d-flex">
+                <input [(ngModel)]="searchKey" type="text" name="search" placeholder="enter username" class="form-control">
+                <!-- dropdown button -->
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary dropdown-toggle ms-3" data-bs-toggle="dropdown" aria-expanded="false">
+                      sort
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" (click)="sortId()">By ID</a></li>
+                      <li><a class="dropdown-item" (click)="sortName()">By Name</a></li>
+                    </ul>
+                  </div>
+            </form>
+
+            <!-- export button -->
+            <button (click)="generatePdf()" class="ms-auto btn btn-success">Export</button>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <table class="table shadow">
+                    <thead>
+                        <tr>
+                            <th class="p-3 ">User ID</th>
+                            <th class="p-3">Username</th>
+                            <th class="p-3">Password</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3 text-center">Action</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let employee of allEmployee | search:searchKey | paginate: { itemsPerPage: 5, currentPage: p }"  [hidden]="employee.id=='1'" >
+                            <td>{{employee.id}}</td>
+                            <td>{{employee.username}}</td>
+                            <td>{{employee.email}}</td>
+                            <td><button [ngClass]="employee.status=='1'?'btn btn-success':'btn btn-warning'">{{employee.status=="1"?'Active':'Inactive'}}</button></td>
+                            <td class="d-flex justify-content-evenly">
+                                <!-- new path is given in the routerLink after editing it in app-routing.module.ts -->
+                                <a routerLink="/edit/{{employee.id}}"><button class="btn btn-outline-primary"><i class="fa-solid fa-pen"></i></button></a>
+                                <button (click)="deleteEmployee(employee.id)" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+
+                        <p *ngIf="(allEmployee | search:searchKey).length==0" class="text-danger">User does not exist</p>
+                    </tbody>
+
+                </table>
+                <div class="d-flex justify-content-center align-items-center mt-5">
+                    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                </div>
+            </div> 
+            <div class="col-md-1"></div>
+        </div>
+        
+
+
+    </div>
+</div>
